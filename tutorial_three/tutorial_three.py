@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Top Block
-# Generated: Thu Dec 20 14:14:36 2018
+# Title: Tutorial Three
+# Generated: Thu Dec 20 16:50:54 2018
 ##################################################
 
 from distutils.version import StrictVersion
@@ -19,7 +19,8 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
 
 from PyQt5 import Qt, QtCore
-from gnuradio import blocks
+from gnuradio import analog
+from gnuradio import audio
 from gnuradio import eng_notation
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
@@ -29,12 +30,12 @@ import sys
 from gnuradio import qtgui
 
 
-class top_block(gr.top_block, Qt.QWidget):
+class tutorial_three(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Top Block")
+        gr.top_block.__init__(self, "Tutorial Three")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Top Block")
+        self.setWindowTitle("Tutorial Three")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -52,7 +53,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "top_block")
+        self.settings = Qt.QSettings("GNU Radio", "tutorial_three")
 
         if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
             self.restoreGeometry(self.settings.value("geometry").toByteArray())
@@ -62,28 +63,23 @@ class top_block(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 32e4
+        self.samp_rate = samp_rate = 32000
 
         ##################################################
         # Blocks
         ##################################################
-        self.blocks_unpacked_to_packed_xx_0 = blocks.unpacked_to_packed_bb(1, gr.GR_MSB_FIRST)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
-        self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, '/media/victor/data/homeRedux/Documents/GnuRaudi/Akago_nurBildchen.svg', False)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/media/victor/data/homeRedux/Documents/GnuRaudi/test.svg', False)
-        self.blocks_file_sink_0.set_unbuffered(True)
+        self.audio_sink_0 = audio.sink(samp_rate, '', False)
+        self.analog_sig_source_x_1 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 5.5e3, 1, 1)
+        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 5e3, 1, 0)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
-        self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_unpacked_to_packed_xx_0, 0))
-        self.connect((self.blocks_unpacked_to_packed_xx_0, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.analog_sig_source_x_0, 0), (self.audio_sink_0, 0))
+        self.connect((self.analog_sig_source_x_1, 0), (self.audio_sink_0, 1))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "top_block")
+        self.settings = Qt.QSettings("GNU Radio", "tutorial_three")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
@@ -92,10 +88,11 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.analog_sig_source_x_1.set_sampling_freq(self.samp_rate)
+        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
 
 
-def main(top_block_cls=top_block, options=None):
+def main(top_block_cls=tutorial_three, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
