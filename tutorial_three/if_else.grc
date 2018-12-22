@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>tutorial_three</value>
+      <value>if_else</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -438,7 +438,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(616, 144)</value>
+      <value>(608, 144)</value>
     </param>
     <param>
       <key>_rotation</key>

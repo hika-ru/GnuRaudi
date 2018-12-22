@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Tutorial Three
-# Generated: Sat Dec 22 20:01:07 2018
+# Title: If Else
+# Generated: Sat Dec 22 21:16:03 2018
 ##################################################
 
 if __name__ == '__main__':
@@ -27,15 +27,17 @@ from gnuradio.filter import firdes
 from optparse import OptionParser
 import sip
 import sys
+import threading
+import time
 from gnuradio import qtgui
 
 
-class tutorial_three(gr.top_block, Qt.QWidget):
+class if_else(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Tutorial Three")
+        gr.top_block.__init__(self, "If Else")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Tutorial Three")
+        self.setWindowTitle("If Else")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -53,13 +55,14 @@ class tutorial_three(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "tutorial_three")
+        self.settings = Qt.QSettings("GNU Radio", "if_else")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
 
         ##################################################
         # Variables
         ##################################################
+        self.variable_function_probe_0 = variable_function_probe_0 = 0
         self.samp_rate = samp_rate = 32000
         self.f_c = f_c = 5500
         self.ampl = ampl = 0
@@ -67,6 +70,7 @@ class tutorial_three(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
+        self.probe = blocks.probe_signal_f()
         self._f_c_tool_bar = Qt.QToolBar(self)
         self._f_c_tool_bar.addWidget(Qt.QLabel("f_c"+": "))
         self._f_c_line_edit = Qt.QLineEdit(str(self.f_c))
@@ -81,6 +85,7 @@ class tutorial_three(gr.top_block, Qt.QWidget):
         self._ampl_line_edit.returnPressed.connect(
         	lambda: self.set_ampl(eng_notation.str_to_num(str(self._ampl_line_edit.text().toAscii()))))
         self.top_grid_layout.addWidget(self._ampl_tool_bar)
+
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
         	1024, #size
         	samp_rate, #samp_rate
@@ -130,23 +135,45 @@ class tutorial_three(gr.top_block, Qt.QWidget):
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, samp_rate,True)
-        self.blocks_probe_signal_x_0 = blocks.probe_signal_f()
         self.analog_sig_source_x_1 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, f_c, ampl, 0)
         self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_SQR_WAVE, 100e-3, 1, 0)
 
-
+        def _variable_function_probe_0_probe():
+            while True:
+                val = self.probe.level()
+                print val
+                if val == 1:
+                    self.set_ampl(1)
+                    self.set_f_c(1000)
+                else:
+                    self.set_ampl(.3)
+                    self.set_f_c(100)
+                try:
+                    self.set_variable_function_probe_0(val)
+                except AttributeError:
+                    pass
+                time.sleep(1.0 / (10))
+        _variable_function_probe_0_thread = threading.Thread(target=_variable_function_probe_0_probe)
+        _variable_function_probe_0_thread.daemon = True
+        _variable_function_probe_0_thread.start()
 
         ##################################################
         # Connections
         ##################################################
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.analog_sig_source_x_1, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_probe_signal_x_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.probe, 0))
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "tutorial_three")
+        self.settings = Qt.QSettings("GNU Radio", "if_else")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
+
+    def get_variable_function_probe_0(self):
+        return self.variable_function_probe_0
+
+    def set_variable_function_probe_0(self, variable_function_probe_0):
+        self.variable_function_probe_0 = variable_function_probe_0
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -175,7 +202,7 @@ class tutorial_three(gr.top_block, Qt.QWidget):
         self.analog_sig_source_x_1.set_amplitude(self.ampl)
 
 
-def main(top_block_cls=tutorial_three, options=None):
+def main(top_block_cls=if_else, options=None):
 
     from distutils.version import StrictVersion
     if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
