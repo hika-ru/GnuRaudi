@@ -1,0 +1,3 @@
+So führst du mit der GNU-Radio-Installation aus der Python-Bomb trotzdem erfolgreich die Python-Skripte aus:
+source ~/prefix/setup_env.sh
+/pfad/skript.py
