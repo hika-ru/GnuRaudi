@@ -22,21 +22,25 @@
 import numpy
 from gnuradio import gr
 
-class multiply_py_ff(gr.sync_block):
+class multiply_py_ff(gr.sync_block):    # This class is a child
+                                        # to class gr.sync_block
     """
     docstring for block multiply_py_ff
     """
     def __init__(self, multiple):
+        self.multiple = multiple # Specific init for this very class.
+        #Run standard init function for object of type sync_block
         gr.sync_block.__init__(self,
             name="multiply_py_ff",
-            in_sig=[<+numpy.float32+>],
-            out_sig=[<+numpy.float32+>])
+            in_sig=[numpy.float32],
+            out_sig=[numpy.float32])
 
-
+    # The work function is where the actual processing happens, where
+    # we want our code to be.
     def work(self, input_items, output_items):
         in0 = input_items[0]
         out = output_items[0]
         # <+signal processing here+>
-        out[:] = in0
+        out[:] = self.multiple * in0
         return len(output_items[0])
 
