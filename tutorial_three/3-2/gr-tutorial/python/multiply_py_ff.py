@@ -28,8 +28,9 @@ class multiply_py_ff(gr.sync_block):    # This class is a child
     docstring for block multiply_py_ff
     """
     def __init__(self, multiple):
-        self.multiple = multiple # Specific init for this very class.
-        #Run standard init function for object of type sync_block
+        # Specific init definition for this very class.
+        self.multiple = multiple  
+        # Run standard init function for object of type sync_block
         gr.sync_block.__init__(self,
             name="multiply_py_ff",
             in_sig=[numpy.float32],
